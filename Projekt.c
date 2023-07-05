@@ -8,7 +8,7 @@ void zapis(int liczba_int, char tablica[]);
 void odczyt(int liczba_int, char tablica[]);
 void dane(float *x, float *y, float *z);
 void konwerter(int liczba_int, char tablica[], char rownanieONP[]);
-float rozwiazanie(float x, float y, float z, char rownanieONP[], float wynik);
+float rozwiazanie(float x, float y, float z, char rownanieONP[]);
 
 int main()
 {
@@ -17,7 +17,6 @@ int main()
     char tablica_1[liczba_int];
     char tablica_2[liczba_int];
     char rownanieONP[liczba_int];
-    float wynik;
     srand(time(NULL));//ustawienie danych do loswania na podstawie czasu komputera
 
     printf("Witaj użytkowniku!\nProszę podaj dowolną dodatnią nieparzystą liczbę całkowitą pozwalającym na wygenerowanie wyrażenia matematycznego:\n");
@@ -35,7 +34,7 @@ int main()
     dane(&x, &y, &z);
     konwerter(liczba_int, tablica_2, rownanieONP);
     printf("RPN expression: %s\n", rownanieONP);
-    rozwiazanie(x, y, z, rownanieONP, wynik);
+    float wynik=rozwiazanie(x, y, z, rownanieONP);
     printf("wynik: %f\n", wynik);
 }
 
@@ -132,13 +131,13 @@ void losowanie(int liczba_int, char tablica[])
             lnn--;
         }
         licznik--;
-        printf("znak %c ", tablica[i]);
-        printf("int %d, ", liczba_int);
-        printf("los %d, ", los);
-        printf("dolny %d, ", dolny);
-        printf("gorny %d, ", gorny);
-        printf("licznik %d, ", licznik);
-        printf("lnn %d\n", lnn);
+        //printf("znak %c ", tablica[i]);
+        //printf("int %d, ", liczba_int);
+        //printf("los %d, ", los);
+        //printf("dolny %d, ", dolny);
+        //printf("gorny %d, ", gorny);
+        //printf("licznik %d, ", licznik);
+        //printf("lnn %d\n", lnn);
     }
 }
 
@@ -238,11 +237,12 @@ void konwerter(int liczba_int, char tablica[], char rownanieONP[]) //funkcja kon
     }
     rownanieONP[pozycja_r] = '\0';
 }
-float rozwiazanie(float x, float y, float z, char rownanieONP[], float wynik)
+float rozwiazanie(float x, float y, float z, char rownanieONP[])
 {
     float stos[strlen(rownanieONP)];
+    float wynik;
     int liczba_s=-1;
-    int i,j;
+    int i;
     for (i=0;i<strlen(rownanieONP);i++)
     {
         if (rownanieONP[i]==120)
@@ -287,10 +287,10 @@ float rozwiazanie(float x, float y, float z, char rownanieONP[], float wynik)
             liczba_s--;
             stos[liczba_s]=wynik;
         }
-        printf("rownanie=%d ",rownanieONP[i]);
-        printf("liczba=%d ",liczba_s);
-        printf("stos=%f ",stos[liczba_s]);
-        printf("wynik=%f\n",wynik);
+        //printf("rownanie=%d ",rownanieONP[i]);
+        //printf("liczba=%d ",liczba_s);
+        //printf("stos=%f ",stos[liczba_s]);
+        //printf("wynik=%f\n",wynik);
     }
     return wynik;
 }
