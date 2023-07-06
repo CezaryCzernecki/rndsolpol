@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-
+void pobierz_float(float *liczba, int *ok);
+void pobierz_liczbe(int *liczba_int, int *ok);
 void losowanie(int liczba_int, char tablica[]);
 void zapis(int liczba_int, char tablica[]);
 void odczyt(int liczba_int, char tablica[]);
@@ -12,22 +13,20 @@ float rozwiazanie(float x, float y, float z, char rownanieONP[]);
 
 int main()
 {
-    int liczba_int = 1,i;
+    int liczba_int = 1,i,ok;
     float x, y, z;
     char tablica_1[liczba_int];
     char tablica_2[liczba_int];
     char rownanieONP[liczba_int];
     srand(time(NULL));//ustawienie danych do loswania na podstawie czasu komputera
-
-    printf("Witaj użytkowniku!\nProszę podaj dowolną dodatnią, nieparzystą liczbę całkowitą większą niz '3' pozwalającą na wygenerowanie wyrażenia matematycznego:\n");
-    scanf("%d", &liczba_int);
-
-    while (liczba_int % 2 == 0 || liczba_int < 3)
+    char input[20];
+    printf("Witaj użytkowniku!\n");
+    do 
     {
-        printf("Proszę podaj liczbę jeszcze raz.\nPamiętaj, że musi ona spełniać poniższe wymagania:\n-dodatnia,\n-całkowita\n-nieparzysta\n-większa niz 3\n");
-        scanf("%d", &liczba_int);
+        pobierz_liczbe(&liczba_int,&ok);
     }
-
+    while (liczba_int % 2 == 0 || liczba_int < 3 || ok!=1);
+    printf("podana przez Ciebie liczba to %d\n",liczba_int);
     losowanie(liczba_int, tablica_1);
     zapis(liczba_int, tablica_1);
     odczyt(liczba_int, tablica_2);
@@ -37,9 +36,21 @@ int main()
     float wynik=rozwiazanie(x, y, z, rownanieONP);
     printf("wynik: %f\n", wynik);
 }
+void pobierz_liczbe(int *liczba_int, int *ok)
+{
+    char input[20];
+    printf("Proszę podaj dowolną dodatnią, nieparzystą liczbę całkowitą większą niz '3' pozwalającą na wygenerowanie wyrażenia matematycznego:");
+    fgets(input, sizeof(input), stdin);
+    *ok=sscanf(input, "%d", liczba_int);
+    if (*ok != 1)
+    {
+        printf("\nnieprawidłowa wartość\n");
+        *liczba_int=0; // w przypadku bledu zwróć wartość 0
+    }
+}
 void losowanie(int liczba_int, char tablica[])
 {
-    int dolny = 1, gorny = 4;
+    int dolny = 1, gorny = 3;
     int lnn = 0; //licznik nawiasów niedomkniętych
     int i;
     int pozycja_s = 0; //numer ostatniej komórki zapisanej w stosie
@@ -164,14 +175,38 @@ void odczyt(int liczba_int, char tablica[])
     }
     fclose(fp);
 }
+void pobierz_float(float *liczba, int *ok)
+{
+    char input[20];
+    fgets(input, sizeof(input), stdin);
+    *ok=sscanf(input, "%f", liczba);
+    if (*ok != 1)
+    {
+        printf("\nnieprawidłowa wartość\n");
+        *liczba=0.0; // w przypadku bledu zwróć wartość 0
+    }
+}
 void dane(float *x, float *y, float *z) //funkcja do pobierania znaków od uzytkownika
 {
+    int ok;
     printf("\nPodaj wartość x=");
-    scanf("%f", x);
+    do
+    {
+    pobierz_float(x,&ok);
+    }
+    while (ok!=1);
     printf("\nPodaj wartość y=");
-    scanf("%f", y);
+    do
+    {
+    pobierz_float(y,&ok);
+    }
+    while (ok!=1);
     printf("\nPodaj wartość z=");
-    scanf("%f", z);
+    do
+    {
+    pobierz_float(z,&ok);
+    }
+    while (ok!=1);
 }
 
 int test_znaku(char znak)
