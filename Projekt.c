@@ -19,12 +19,12 @@ int main()
     char rownanieONP[liczba_int];
     srand(time(NULL));//ustawienie danych do loswania na podstawie czasu komputera
 
-    printf("Witaj użytkowniku!\nProszę podaj dowolną dodatnią nieparzystą liczbę całkowitą pozwalającym na wygenerowanie wyrażenia matematycznego:\n");
+    printf("Witaj użytkowniku!\nProszę podaj dowolną dodatnią, nieparzystą liczbę całkowitą większą niz '3' pozwalającą na wygenerowanie wyrażenia matematycznego:\n");
     scanf("%d", &liczba_int);
 
-    while (liczba_int % 2 == 0 || liczba_int < 1)
+    while (liczba_int % 2 == 0 || liczba_int < 3)
     {
-        printf("Proszę podaj liczbę jeszcze raz.\nPamiętaj, że musi ona spełniać poniższe wymagania:\n-dodatnia,\n-całkowita\n-nieparzysta\n");
+        printf("Proszę podaj liczbę jeszcze raz.\nPamiętaj, że musi ona spełniać poniższe wymagania:\n-dodatnia,\n-całkowita\n-nieparzysta\n-większa niz 3\n");
         scanf("%d", &liczba_int);
     }
 
@@ -33,11 +33,10 @@ int main()
     odczyt(liczba_int, tablica_2);
     dane(&x, &y, &z);
     konwerter(liczba_int, tablica_2, rownanieONP);
-    printf("RPN expression: %s\n", rownanieONP);
+    printf("Wyrazenie w ONP: %s\n", rownanieONP);
     float wynik=rozwiazanie(x, y, z, rownanieONP);
     printf("wynik: %f\n", wynik);
 }
-
 void losowanie(int liczba_int, char tablica[])
 {
     int dolny = 1, gorny = 4;
@@ -155,10 +154,10 @@ void zapis(int liczba_int, char tablica[])
 }
 void odczyt(int liczba_int, char tablica[])
 {
-FILE *fp;
+    FILE *fp;
     fp = fopen("dane.txt", "r+");
     printf("\noto twoje odczytane równanie: \n");
-    for (int i = 0; i < liczba_int; i++) //zapis równania do pliku oraz wyświetlenie go dla uzytkownika
+    for (int i = 0; i < liczba_int; i++) //zapis równania z pliku do zmiennej oraz wyświetlenie go dla uzytkownika
     {
        tablica[i]=fgetc(fp);
        printf("%c", tablica[i]);
@@ -190,7 +189,7 @@ int priorytet(char znak) //wunkcja nadająca priorytet poszczególnym znakom ope
         return 0;
 }
 
-void konwerter(int liczba_int, char tablica[], char rownanieONP[]) //funkcja konwertująca wyrazenie z nawiasami w sposób klayczny na takie w Odwróconej Notacji Polskiej 
+void konwerter(int liczba_int, char tablica[], char rownanieONP[]) //funkcja konwertująca wyrazenie z nawiasami na takie w Odwróconej Notacji Polskiej 
 {
     char stos[liczba_int];
     int pozycja_s = -1;
@@ -198,44 +197,44 @@ void konwerter(int liczba_int, char tablica[], char rownanieONP[]) //funkcja kon
 
     for (int i = 0; i < liczba_int; i++)
     {
-        char znak = tablica[i];
+        char znak = tablica[i]; //przypisanie znaku z tablicy do zmiennej w funkcji
 
-        if (test_znaku(znak))
+        if (test_znaku(znak)) //jeśli zostanie pobrany znak operacji 
         {
-            while (pozycja_s >= 0 && test_znaku(stos[pozycja_s]) &&
-                   priorytet(znak) <= priorytet(stos[pozycja_s]))
+            while (pozycja_s >= 0 && test_znaku(stos[pozycja_s]) && //jezeli obecnie na szczycie stosu znajduje się znak
+                   priorytet(znak) <= priorytet(stos[pozycja_s])) //oraz jezeli priorytet znaku ze stosu jest wyzszy od obecnie rozpatrywanego
             {
-                rownanieONP[pozycja_r++] = stos[pozycja_s--];
+                rownanieONP[pozycja_r++] = stos[pozycja_s--]; //dodaj znak ze stosu do wyrazenia
             }
-            stos[++pozycja_s] = znak;
+            stos[++pozycja_s] = znak; //dodaj rozpatrywany znak do stosu
         }
-        else if (znak == '(')
+        else if (znak == '(') //gdy zostanie wylosowany nawias otwierający
         {
-            stos[++pozycja_s] = znak;
+            stos[++pozycja_s] = znak; //dodaj go do stosu
         }
-        else if (znak == ')')
+        else if (znak == ')') //gdy zostanie pobrany nawias zamykający 
         {
-            while (pozycja_s >= 0 && stos[pozycja_s] != '(')
+            while (pozycja_s >= 0 && stos[pozycja_s] != '(') //gdy poprzedni znak nie jest nawiasem otwierającym
             {
-                rownanieONP[pozycja_r++] = stos[pozycja_s--];
+                rownanieONP[pozycja_r++] = stos[pozycja_s--]; //dodaj kolejn
             }
 
-            if (pozycja_s >= 0 && stos[pozycja_s] == '(')
+            if (pozycja_s >= 0 && stos[pozycja_s] == '(')// gdy poprzednim znakiem jest nawias otwierający
             {
-                pozycja_s--;
+                pozycja_s--; //cofnij pozycje stosu o 1 aby nawiasy mogły się znieść
             }
         }
         else
         {
-            rownanieONP[pozycja_r++] = znak;
+            rownanieONP[pozycja_r++] = znak; //gdy zostanie pobrany liczba
         }
     }
 
-    while (pozycja_s >= 0)
+    while (pozycja_s >= 0) 
     {
-        rownanieONP[pozycja_r++] = stos[pozycja_s--];
+        rownanieONP[pozycja_r++] = stos[pozycja_s--]; //dodaj pozostałe znaki ze stosu do równania
     }
-    rownanieONP[pozycja_r] = '\0';
+    rownanieONP[pozycja_r] = '\0'; //znak wieńczący wyrazenie
 }
 float rozwiazanie(float x, float y, float z, char rownanieONP[])
 {
@@ -248,40 +247,37 @@ float rozwiazanie(float x, float y, float z, char rownanieONP[])
         if (rownanieONP[i]==120)
         {
             liczba_s++;
-            printf("x=%f ",x);
             stos[liczba_s]=x;
         }
-        if (rownanieONP[i]==121)
+        else if (rownanieONP[i]==121)
         {
             liczba_s++;
-            printf("y=%f ",y);
             stos[liczba_s]=y;
         }
-        if (rownanieONP[i]==122)
+        else if (rownanieONP[i]==122)
         {
             liczba_s++;
-            printf("z=%f ",z);
             stos[liczba_s]=z;
         }
-        if (rownanieONP[i]==43)
+        else if (rownanieONP[i]==43)
         {
             wynik=stos[liczba_s]+stos[liczba_s-1];
             liczba_s--;
             stos[liczba_s]=wynik;
         }
-        if (rownanieONP[i]==45)
+        else if (rownanieONP[i]==45)
         {
             wynik=stos[liczba_s-1]-stos[liczba_s];
             liczba_s--;
             stos[liczba_s]=wynik;
         }
-        if (rownanieONP[i]==42)
+        else if (rownanieONP[i]==42)
         {
             wynik=stos[liczba_s]*stos[liczba_s-1];
             liczba_s--;
             stos[liczba_s]=wynik;
         }
-        if (rownanieONP[i]==47)
+        else if (rownanieONP[i]==47)
         {
             wynik=stos[liczba_s-1]/stos[liczba_s];
             liczba_s--;
